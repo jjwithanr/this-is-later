@@ -1,11 +1,15 @@
 const dotenv = require('dotenv');
 const axios = require('axios');
+const { handleAuthorizationCallback } = require('./pocketController');
 
 dotenv.config();
 
+const consumerKey = process.env.POCKET_CONSUMER_KEY;
+const redirectUri = "http:localhost:3001/api/callback/";
+
 async function getTestData(req, res) {
     try {
-        res.json({'message': 'Hello World'});
+        res.json({'message': 'Hello Earth!'});
     } catch (error) {
         console.log(error);
         res.status(500).send('Server Error');
@@ -13,20 +17,18 @@ async function getTestData(req, res) {
 }
 
 async function getPocketData(req, res) {
-  try {
-    const response = await axios.get('https://getpocket.com/v3/get', {
-      params: {
-        consumer_key: process.env.POCKET_CONSUMER_KEY,
-        access_token: process.env.POCKET_ACCESS_TOKEN,
-        count: 10,
-        detailType: 'complete',
-      },
+  const url = `https://getpocket.com/v3/oauth/request?consumer_key=${consumerKey}&redirect_uri=${redirectUri}`;
+  axios.post(url)
+    .then(response => {
+      requestToken = response.data.split('=')[1];
+      console.log(`Request token: ${requestToken}`);
+      const redirectUrl = `https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectUri}`;
+      res.redirect(redirectUrl);
+    })
+    .catch(error => {
+      console.error(error);
+      res.send('An error occurred while obtaining a request token');
     });
-    res.json(response.data.list);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Server Error');
-  }
 }
 
 async function getYouTubeData(req, res) {
@@ -54,4 +56,5 @@ module.exports = {
   getTestData,
   getPocketData,
   getYouTubeData,
+  handleAuthorizationCallback,
 };
