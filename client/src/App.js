@@ -5,6 +5,11 @@ import YouTubeList from './components/YouTubeList';
 
 function App() {
   const [testData, setTestData] = useState([]);
+  const [fetched, setFetched] = useState(false);
+
+  function handlePocketClick() {
+    setFetched(!fetched);
+  }
 
   useEffect(() => {
     axios.get('/api/test')
@@ -20,8 +25,8 @@ function App() {
     <div>
       <h1>This is Later</h1>
       <h2>Test: {testData}</h2>
-      <PocketList />
-      {/* <YouTubeList /> */}
+      {/* add fetched as an input param? */}
+      {fetched ? <PocketList /> : <img src="/images/pocket-logo.png" width={70} alt="Pocket" onClick={handlePocketClick} />}
     </div>
   );
 }

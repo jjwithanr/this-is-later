@@ -7,7 +7,7 @@ function PocketList() {
   useEffect(() => {
     axios.get('/api/pocket')
       .then(response => {
-        setPocketData(response.data);
+        window.location.href = response.data;
       })
       .catch(error => {
         console.log(error);
@@ -16,14 +16,14 @@ function PocketList() {
 
   return (
     <div>
-      <h2>Pocket Data: {pocketData}</h2>
-      {/* <ul>
+      <h2>Pocket Data:</h2>
+      <ul>
         {pocketData.map(item => (
-          <li key={item.id}>
-            <a href={item.url}>{item.title}</a>
+          <li key={item.item_id}>
+            <a href={item.given_url}>{item.given_title}</a>
           </li>
         ))}
-      </ul> */}
+      </ul>
     </div>
   );
 }
